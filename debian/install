@@ -1,6 +1,6 @@
-app.py /home/www-user/simple-parser
-conf /home/www-user/simple-parser
-lib /home/www-user/simple-parser
-parser.py /home/www-user/simple-parser
-README.md /home/www-user/simple-parser
-requirements.txt /home/www-user/simple-parser
+app.py /home/www-user/simple-crawler
+conf /home/www-user/simple-crawler
+lib /home/www-user/simple-crawler
+crawler.py /home/www-user/simple-crawler
+README.md /home/www-user/simple-crawler
+requirements.txt /home/www-user/simple-crawler

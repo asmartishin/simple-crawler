@@ -1,0 +1,35 @@
+{
+    "base_url": "https://habrahabr.ru",
+    "index_url": "/all",
+    "selectors": {
+        "main_page": {
+            "post": {
+                "tag": "div",
+                "selector": "post_teaser"
+            },
+            "create_time": {
+                "tag": "span",
+                "selector": "post__time_published"
+            },
+            "post_title": {
+                "tag": "a",
+                "selector": "post__title_link"
+            },
+            "post_author": {
+                "tag": "a",
+                "selector": "post-author__link"
+            },
+            "next_page": {
+                "tag": "a",
+                "selector": "next"
+            }
+        },
+        "post_page": {
+            "content": {
+                "tag": "div",
+                "selector": "content.html_format"
+            }
+        }
+    },
+    "data_update_interval": 1200
+}

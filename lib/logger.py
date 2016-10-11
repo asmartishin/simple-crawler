@@ -1,7 +1,12 @@
 import logging
+import os
+
 
 class Logger(object):
     def __init__(self, filename='debug.log'):
+        folder = os.path.dirname(filename)
+        if not os.path.exists(folder):
+            os.makedirs(folder)
         self.log = logging.getLogger('main')
         handler = logging.FileHandler(filename)
         console = logging.StreamHandler()

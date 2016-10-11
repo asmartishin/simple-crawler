@@ -1,4 +1,4 @@
-# Simple parser
+# Simple crawler
 
 Требуется написать систему, которая выдает различную статистику по сайту habrahabr.ru  
 Для этого требуется:  
@@ -10,14 +10,14 @@
 <br />
 
 Для запуска необходимо (первые 2 пункта можно пропустить и установить зависимости руками):  
-1) Cобрать пакет из исходнкиов при помощи  
+1) Cобрать deb пакет  
 `debuild -us -uc`
 
-2) Установить пакет и зависимости для библиотек на целевой машине при помощи  
-`sudo dpkg --force-depends -i && sudo apt-get install -f`
+2) Установить пакет и зависимости на машине  
+`sudo dpkg --force-depends -i && sudo apt-get update && sudo apt-get install -f`
 
 3) Зайти в папку с проектом и активировать virtualenv  
 `virtualenv venv && source venv/bin/activate`
 
-4) У становить зависимости через pip3  
-`pip3 install -r  requirements.txt`
+4) Установить зависимости через pip3  
+`pip3 install -r requirements.txt`
