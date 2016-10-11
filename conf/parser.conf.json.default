@@ -1,0 +1,17 @@
+{
+    "base": "https://habrahabr.ru",
+    "init": "/all",
+    "selectors": {
+        "articles_list": {
+            "ctime": ".post__time_published",
+            "article_link": ".post__title_link",
+            "next_page": "#next_page",
+            "previous_page": "#previous_page"
+        },
+        "article": {
+            "content": ".content.html_format",
+            "autor": ".author-info__name"
+        }
+    },
+    "data_update_interval": 1200
+}

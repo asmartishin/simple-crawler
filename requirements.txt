@@ -1,0 +1,5 @@
+Flask
+requests
+lxml
+python-dateutil
+pymongo
