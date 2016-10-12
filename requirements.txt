@@ -3,3 +3,6 @@ requests
 lxml
 python-dateutil
 pymongo
+pymorphy2
+pymorphy2-dicts
+DAWG-Python

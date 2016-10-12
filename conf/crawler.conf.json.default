@@ -27,7 +27,7 @@
         "post_page": {
             "content": {
                 "tag": "div",
-                "selector": "content.html_format"
+                "selector": "content html_format"
             }
         }
     },

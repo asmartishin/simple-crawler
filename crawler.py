@@ -9,6 +9,7 @@ from lib.logger import Logger
 from lxml import html, etree
 from pprint import pprint
 from datetime import datetime, timedelta
+import pymorphy2
 
 
 class Crawler(object):
@@ -20,6 +21,7 @@ class Crawler(object):
         self.base_url = config['base_url']
         self.data_from_main_page = []
         self.inverted_index = {}
+        self.morph = pymorphy2.MorphAnalyzer()
         if args.daemon:
             self.data_update_interval = config['data_update_interval']
             self._spawn_data_updater()
@@ -32,7 +34,7 @@ class Crawler(object):
         for post_data in self.data_from_main_page:
             document_id = post_data['document_id']
             content = self.get_data_from_post(post_data['document_url'])
-            self.create_inverted_index(content, document_id, self.inverted_index)
+            self._create_inverted_index(content, document_id, self.inverted_index)
         pprint(self.inverted_index)
 
     def get_data_from_main_page(self, url, min_timestamp):
@@ -72,10 +74,11 @@ class Crawler(object):
                 self.post_page_selectors['content']['tag'], self.post_page_selectors['content']['selector'])))).strip()
         return post_content
 
-    def create_inverted_index(self, content, document_id, inverted_index):
+    def _create_inverted_index(self, content, document_id, inverted_index):
         forward_index = {index: word for index, word in enumerate(content.split())}
         for key, value in forward_index.items():
-            inverted_index.setdefault(value, {}).setdefault(document_id, []).append(key)
+            value_normalized = self.morph.parse(value)[0].normal_form
+            inverted_index.setdefault(value_normalized, {}).setdefault(document_id, []).append(key)
 
     @staticmethod
     def dom_element_get_children(root, selector_data):
