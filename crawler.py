@@ -4,7 +4,7 @@ import requests
 import json
 import argparse
 from threading import Thread
-from lib.utils import string_to_date, date_to_timestamp, get_username, string_to_hash, remove_whitespaces
+from lib.utils import string_to_date, date_to_timestamp, get_username, string_to_hash, remove_whitespaces, load_config
 from lib.logger import Logger
 from lxml import html, etree
 from pprint import pprint
@@ -31,6 +31,7 @@ class Crawler(object):
         min_timestamp = date_to_timestamp(datetime.now() - timedelta(1))
         data_from_posts = []
         self.data_from_main_page = self.get_data_from_main_page(url, min_timestamp)
+        pprint(self.data_from_main_page)
         for post_data in self.data_from_main_page:
             document_id = post_data['document_id']
             content = self.get_data_from_post(post_data['document_url'])
@@ -44,7 +45,8 @@ class Crawler(object):
         while continue_parsing:
             tree = etree.HTML(requests.get(url).text)
             for post in Crawler.dom_element_get_children(tree, self.main_page_selectors['post']):
-                create_time = string_to_date(Crawler.dom_element_get_children(post, self.main_page_selectors['create_time'])[0].text)
+                create_time = string_to_date(
+                    Crawler.dom_element_get_children(post, self.main_page_selectors['create_time'])[0].text)
                 ctime = date_to_timestamp(create_time)
 
                 if ctime < min_timestamp:
@@ -52,7 +54,7 @@ class Crawler(object):
                     break
 
                 post_title = Crawler.dom_element_get_children(post, self.main_page_selectors['post_title'])[0]
-                post_author = Crawler.dom_element_get_children(post, self.main_page_selectors['post_title'])[0]
+                post_author = Crawler.dom_element_get_children(post, self.main_page_selectors['post_author'])[0]
                 post_url = post_title.get('href')
                 document_id = string_to_hash(post_title.get('href'))
 
@@ -71,7 +73,7 @@ class Crawler(object):
     def get_data_from_post(self, url):
         tree = etree.HTML(requests.get(url).text)
         post_content = remove_whitespaces("".join(tree.xpath('//{}[contains(@class, "{}")]/text()'.format(
-                self.post_page_selectors['content']['tag'], self.post_page_selectors['content']['selector'])))).strip()
+            self.post_page_selectors['content']['tag'], self.post_page_selectors['content']['selector'])))).strip()
         return post_content
 
     def _create_inverted_index(self, content, document_id, inverted_index):
@@ -105,7 +107,6 @@ def parse_arguments():
 
 if __name__ == '__main__':
     args = parse_arguments()
-    with open('conf/crawler.conf.json') as conf_file:
-        config = json.load(conf_file)
+    config = load_config('conf/crawler.conf.json')
     crawler = Crawler(args, config)
     crawler.get_data()

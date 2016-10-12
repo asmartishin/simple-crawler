@@ -4,6 +4,15 @@ from dateutil import parser
 from urllib.parse import urlparse
 import re
 import hashlib
+import os
+import json
+from lib.logger import Logger
+
+logger = Logger('logs/debug.log').log
+
+
+class ConfigLoadError(Exception):
+    pass
 
 
 format_time = {
@@ -43,5 +52,19 @@ def get_username(url):
 def string_to_hash(string):
     return hashlib.md5(string.encode('utf-8')).hexdigest()
 
+
 def remove_whitespaces(string):
-    return re.sub(r'\s+', ' ', string)
+    return re.sub(r'[^\w\s]', '', re.sub(r'\s+', ' ', string))
+
+
+def load_config(filename):
+    if os.path.isfile(filename):
+        try:
+            with open(filename) as conf_file:
+                return json.load(conf_file)
+        except Exception as e:
+            logger.error('{}: config is not a valid json. {}'.format(e.__class__.__name__, e))
+            raise ConfigLoadError('ValueError: config is not a valid json')
+    else:
+        logger.error('FileNotFoundError: Wrong config path: "{}"'.format(filename))
+        raise ConfigLoadError('FileNotFoundError: Wrong config path: "{}"'.format(filename))
