@@ -6,10 +6,6 @@ import re
 import hashlib
 import os
 import json
-from lib.logger import Logger
-
-logger = Logger('logs/debug.log').log
-
 
 class ConfigLoadError(Exception):
     pass
@@ -63,8 +59,6 @@ def load_config(filename):
             with open(filename) as conf_file:
                 return json.load(conf_file)
         except Exception as e:
-            logger.error('{}: config is not a valid json. {}'.format(e.__class__.__name__, e))
-            raise ConfigLoadError('ValueError: config is not a valid json')
+            raise ConfigLoadError('Config is not a valid json')
     else:
-        logger.error('FileNotFoundError: Wrong config path: "{}"'.format(filename))
-        raise ConfigLoadError('FileNotFoundError: Wrong config path: "{}"'.format(filename))
+        raise ConfigLoadError('Wrong config path "{}"'.format(filename))

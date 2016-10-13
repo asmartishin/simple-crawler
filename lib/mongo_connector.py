@@ -9,7 +9,7 @@ class MongoConnector(object):
         self.index = self.db[config['index']]
 
     def insert_document(self, data, collection):
-        if collection == self.config['data']:
+        if collection == 'data':
             doc = {
                 '_id': data['document_id'],
                 'ctime': data['ctime'],
@@ -18,9 +18,9 @@ class MongoConnector(object):
                 'title': data['post_title']
             }
             self.data.insert(doc)
-        elif collection == self.config['index']:
+        elif collection == 'index':
             for word, word_occurances in data.items():
-                if not self.key_in_collection(word, self.config['index']):
+                if not self.id_in_collection(word, self.config['index']):
                     doc = {
                         '_id': word,
                         'index': word_occurances
@@ -28,10 +28,11 @@ class MongoConnector(object):
                     self.index.insert(doc)
                 else:
                     for document_hash, document_occurances in word_occurances.items():
-                        self.index.update({'_id': word}, {'$set': {'value.' + document_hash: document_occurances}})
+                        self.index.update({'_id': word}, {'$set': {'index.' + document_hash: document_occurances}})
 
-    def key_in_collection(self, key, collection):
+    def id_in_collection(self, key, collection):
         return bool(self.db[self.config[collection]].find_one({'_id': key}))
+
 
     def filter_users_by_time(self, start_timestamp, end_timestamp):
         result = self.data.find(
