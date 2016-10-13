@@ -7,6 +7,7 @@ import hashlib
 import os
 import json
 
+
 class ConfigLoadError(Exception):
     pass
 
@@ -49,8 +50,12 @@ def string_to_hash(string):
     return hashlib.md5(string.encode('utf-8')).hexdigest()
 
 
-def remove_whitespaces(string):
-    return re.sub(r'[^\w\s]', '', re.sub(r'\s+', ' ', string))
+def process_document_text(string):
+    return re.sub(r'\s+', ' ', re.sub(r'[0-9]|[^\w\s]', '', string)).lower()
+
+
+def timestamp_to_date(timestamp):
+    return datetime.fromtimestamp(timestamp)
 
 
 def load_config(filename):
@@ -62,3 +67,11 @@ def load_config(filename):
             raise ConfigLoadError('Config is not a valid json')
     else:
         raise ConfigLoadError('Wrong config path "{}"'.format(filename))
+
+
+def timestamp_today():
+    return date_to_timestamp(datetime.now())
+
+
+def timestamp_day_decrement(delta=1):
+    return date_to_timestamp(datetime.now() - timedelta(delta))

@@ -20,4 +20,15 @@
 `virtualenv venv && source venv/bin/activate`
 
 4) Установить зависимости через pip3  
-`pip3 install -r requirements.txt`
+`pip3 install -r requirements.txt`  
+<br />
+
+Публичное `api` доступно по адресу https://mytty.ru/api/  
+
+Скрипт `crawler.py` обходит статьи и скачивает оттуда контент.  
+
+В `app.py` реализовано 4 ручки:  
+1) /api/authors  
+2) /api/posts  
+3) /api/idf  
+4) /api/update - дергает `crawler.py`  

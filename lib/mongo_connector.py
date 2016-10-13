@@ -1,38 +1,31 @@
 from pymongo import MongoClient
 
 
+class IndexInsertError(Exception):
+    pass
+
+
 class MongoConnector(object):
     def __init__(self, config):
         self.config = config
         self.db = MongoClient(config['host'], config['port'])[config['db']]
         self.data = self.db[config['data']]
-        self.index = self.db[config['index']]
 
-    def insert_document(self, data, collection):
-        if collection == 'data':
-            doc = {
-                '_id': data['document_id'],
-                'ctime': data['ctime'],
-                'url': data['document_url'],
-                'author': data['post_author'],
-                'title': data['post_title']
-            }
-            self.data.insert(doc)
-        elif collection == 'index':
-            for word, word_occurances in data.items():
-                if not self.id_in_collection(word, self.config['index']):
-                    doc = {
-                        '_id': word,
-                        'index': word_occurances
-                    }
-                    self.index.insert(doc)
-                else:
-                    for document_hash, document_occurances in word_occurances.items():
-                        self.index.update({'_id': word}, {'$set': {'index.' + document_hash: document_occurances}})
+    def insert_document(self, data):
+        if not data['index']:
+            raise IndexInsertError('No document index')
+        doc = {
+            '_id': data['document_id'],
+            'ctime': data['ctime'],
+            'url': data['document_url'],
+            'author': data['post_author'],
+            'title': data['post_title'],
+            'index': data['index']
+        }
+        self.data.insert(doc)
 
-    def id_in_collection(self, key, collection):
-        return bool(self.db[self.config[collection]].find_one({'_id': key}))
-
+    def id_in_collection(self, key):
+        return bool(self.data.find_one({'_id': key}))
 
     def filter_users_by_time(self, start_timestamp, end_timestamp):
         result = self.data.find(
@@ -42,12 +35,8 @@ class MongoConnector(object):
                         '$gt': start_timestamp,
                         '$lt': end_timestamp
                     }
-            },
-            {
-                'author': 1,
-                '_id': 0
             }
-        )
+        ).distinct('author')
         return list(result)
 
     def filter_posts_by_user(self, user, start_timestamp, end_timestamp):
@@ -72,3 +61,14 @@ class MongoConnector(object):
             }
         )
         return list(result)
+
+    def filter_index_by_documents(self, start_timestamp, end_timestamp):
+        result = self.data.find(
+            {
+                'ctime': {
+                    '$gt': start_timestamp,
+                    '$lt': end_timestamp
+                }
+            }
+        ).distinct('index')
+        return result

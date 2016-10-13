@@ -2,6 +2,5 @@
     "host": "localhost",
     "port": 27017,
     "db": "test",
-    "data": "data",
-    "index": "index"
+    "data": "data"
 }
