@@ -2,7 +2,7 @@
 
 from flask import Flask, Blueprint, jsonify, request, abort
 import json
-from lib.utils import load_config, timestamp_today, timestamp_day_decrement, timestamp_to_date
+from lib.utils import load_config, timestamp_today, timestamp_day_decrement, timestamp_to_date, normalize_word
 from lib.logger import Logger
 from lib.mongo_connector import MongoConnector
 from crawler import Crawler
@@ -18,8 +18,11 @@ def index():
 
 @api.route('/update')
 def update():
-    crawler.update_database()
-    return jsonify({'message': 'database updated'})
+    try:
+        crawler.update_database()
+    except Exception as e:
+        return jsonify({'message': 'update failed'}), 400
+    return jsonify({'message': 'update successful'})
 
 
 @api.route('/users')
@@ -43,7 +46,7 @@ def posts():
 def idf():
     start_timestamp = int(request.args.get('start') or timestamp_day_decrement())
     end_timestamp = int(request.args.get('end') or timestamp_today())
-    word = request.args.get('word')
+    word = normalize_word(request.args.get('word').lower())
     if not word:
         return jsonify({'message': 'word not specified'}), 400
     index_by_documents = mongo.filter_index_by_documents(start_timestamp, end_timestamp)
@@ -60,7 +63,7 @@ def idf():
 
 if __name__ == '__main__':
     mongo = MongoConnector(load_config('conf/db.conf.json'))
-    logger = Logger('logs/debug1.log').log
+    logger = Logger('logs/debug.log').log
 
     config = load_config('conf/app.conf.json')
     assert isinstance(config['port'], int)

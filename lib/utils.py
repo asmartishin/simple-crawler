@@ -6,6 +6,7 @@ import re
 import hashlib
 import os
 import json
+import pymorphy2
 
 
 class ConfigLoadError(Exception):
@@ -29,6 +30,8 @@ format_time = {
     'сегодня': datetime.now().strftime('%Y-%m-%d'),
     'вчера': (datetime.now() - timedelta(1)).strftime('%Y-%m-%d')
 }
+
+morph = pymorphy2.MorphAnalyzer()
 
 
 def string_to_date(stime):
@@ -75,3 +78,7 @@ def timestamp_today():
 
 def timestamp_day_decrement(delta=1):
     return date_to_timestamp(datetime.now() - timedelta(delta))
+
+
+def normalize_word(word):
+    return morph.parse(word)[0].normal_form

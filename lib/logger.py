@@ -4,12 +4,11 @@ import os
 
 class Singleton(object):
     def __new__(cls, *args, **kwds):
-        self = "__self__"
-        if not hasattr(cls, self):
+        if not hasattr(cls, '__self__'):
             instance = object.__new__(cls)
             instance.init(*args, **kwds)
-            setattr(cls, self, instance)
-        return getattr(cls, self)
+            setattr(cls, '__self__', instance)
+        return getattr(cls, '__self__')
 
     def init(self, *args, **kwds):
         pass
@@ -18,7 +17,7 @@ class Singleton(object):
 class Logger(Singleton):
     def __init__(self, filename='debug.log'):
         folder = os.path.dirname(filename)
-        if not os.path.exists(folder):
+        if not os.path.exists(folder) and folder:
             os.makedirs(folder)
         self.log = logging.getLogger('main')
         if not len(self.log.handlers):

@@ -2,11 +2,10 @@
 
 import requests
 from lib.utils import string_to_date, date_to_timestamp, get_username, string_to_hash, process_document_text, \
-    load_config, timestamp_day_decrement, timestamp_today
+    load_config, timestamp_day_decrement, timestamp_today, normalize_word
 from lib.logger import Logger
 from lib.mongo_connector import MongoConnector
 from lxml import html, etree
-import pymorphy2
 
 
 class Crawler(object):
@@ -17,7 +16,6 @@ class Crawler(object):
         self.main_page_selectors = config['selectors']['main_page']
         self.post_page_selectors = config['selectors']['post_page']
         self.base_url = config['base_url']
-        self.morph = pymorphy2.MorphAnalyzer()
 
     def update_database(self):
         url = self.base_url + self.config['index_url']
@@ -71,7 +69,7 @@ class Crawler(object):
         inverted_index = {}
         forward_index = {index: word for index, word in enumerate(content.split())}
         for index, word in forward_index.items():
-            word_normalized = self.morph.parse(word)[0].normal_form
+            word_normalized = normalize_word(word)
             inverted_index.setdefault(word_normalized, []).append(index)
         return inverted_index
 
