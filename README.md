@@ -23,8 +23,6 @@
 `pip3 install -r requirements.txt`  
 <br />
 
-Публичное `api` доступно по адресу https://mytty.ru/api/  
-
 Скрипт `crawler.py` обходит и индексирует статьи.  
 
 В `app.py` реализовано 4 ручки:  
