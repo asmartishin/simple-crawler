@@ -3,14 +3,14 @@ import os
 
 
 class Singleton(object):
-    def __new__(cls, *args, **kwds):
+    def __new__(cls, *args, **kwargs):
         if not hasattr(cls, '__self__'):
             instance = object.__new__(cls)
-            instance.init(*args, **kwds)
+            instance.init(*args, **kwargs)
             setattr(cls, '__self__', instance)
         return getattr(cls, '__self__')
 
-    def init(self, *args, **kwds):
+    def init(self, *args, **kwargs):
         pass
 
 
